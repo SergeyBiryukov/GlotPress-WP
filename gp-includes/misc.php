@@ -325,3 +325,40 @@ function gp_gmt_strtotime( $string ) {
 
 	return $time;
 }
+
+function gp_personal_options( $user ) {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	
+?>
+<tr>
+<th scope="row"><?php _e( 'GlotPress Administrator', 'glotpress' ); ?></th>
+<td><fieldset><legend class="screen-reader-text"><span><?php _e('Toolbar') ?></span></legend>
+<label for="gp_administrator">
+<input name="gp_administrator" type="checkbox" id="gp_administrator" value="1"<?php checked( GP::$permission->user_can( $user, 'admin' ) ); ?> />
+<?php _e( 'If checked, this user will be a GlotPress administrator', 'glotpress' ); ?></label><br />
+</fieldset>
+</td>
+</tr>
+
+<?php
+}
+
+function gp_personal_options_update( $user_id ) {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	
+	$current_gp_admin = GP::$permission->user_can( $user_id, 'admin' );
+	
+	if( array_key_exists( 'gp_administrator', $_POST ) && ! $current_gp_admin ) {
+		GP::$administrator_permission->create( array( 'user_id' => $user_id, 'action' => 'admin', 'object_type' => null ) );
+	}
+	
+	if( ! array_key_exists( 'gp_administrator', $_POST ) && $current_gp_admin ) {
+		$current_perm = GP::$administrator_permission->find_one( array( 'user_id' => $user_id, 'action' => 'admin' ) );
+		$current_perm->delete();
+	}
+		
+}
