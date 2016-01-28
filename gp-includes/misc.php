@@ -334,7 +334,7 @@ function gp_personal_options( $user ) {
 ?>
 <tr>
 <th scope="row"><?php _e( 'GlotPress Administrator', 'glotpress' ); ?></th>
-<td><fieldset><legend class="screen-reader-text"><span><?php _e('Toolbar') ?></span></legend>
+<td><fieldset><legend class="screen-reader-text"><span><?php _e( 'GlotPress Administrator', 'glotpress' ); ?></span></legend>
 <label for="gp_administrator">
 <input name="gp_administrator" type="checkbox" id="gp_administrator" value="1"<?php checked( GP::$permission->user_can( $user, 'admin' ) ); ?> />
 <?php _e( 'If checked, this user will be a GlotPress administrator', 'glotpress' ); ?></label><br />
