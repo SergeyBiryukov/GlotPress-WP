@@ -7,7 +7,9 @@ class GP_Administrator_Permission extends GP_Permission {
 	var $non_updatable_attributes = array( 'id', );
 
 	function restrict_fields( $permission ) {
-		$permission->user_id_should_not_be('empty');
+		$permission->user_id_should_not_be( 'empty' );
+		$permission->action_should_not_be( 'empty' );  
+		$permission->object_type_should_be( 'empty' ); 
 	}
 
 }
