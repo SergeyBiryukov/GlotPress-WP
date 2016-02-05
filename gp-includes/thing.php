@@ -51,18 +51,14 @@ class GP_Thing {
 		self::$static_by_class[$this->class][$name] = $value;
 	}
 
-	function __call( $name, $args ) {
-		$suffix = '_no_map';
-		if ( gp_endswith( $name, $suffix ) ) {
-			$name = substr( $name, 0, strlen( $name ) - strlen( $suffix ) );
-			$this->map_results = false;
-			$result = call_user_func_array( array( &$this, $name ), $args );
-			$this->map_results = true;
-			return $result;
-		}
-		trigger_error(sprintf('Call to undefined function: %s::%s().', get_class($this), $name), E_USER_ERROR);
-	}
+	private function _no_map( $name, $args ) {
+		$this->map_results = false;
+		$result = call_user_func_array( array( &$this, $name ), $args );
+		$this->map_results = true;
 
+		return $result;
+	}
+	
 	// CRUD
 
 	/**
@@ -127,8 +123,17 @@ class GP_Thing {
 		return $this->map( $wpdb->get_results( $this->prepare( $args ) ) );
 	}
 
+	function many_no_map() {
+		$args = func_get_args();
+		return $this->_no_map( 'many', $args );
+	}
+	
 	function find_many( $conditions, $order = null ) {
 		return $this->many( $this->select_all_from_conditions_and_order( $conditions, $order ) );
+	}
+	
+	function find_many_no_map( $conditions, $order = null ) {
+		return $this->_no_map( 'find_many',  array( $conditions, $order ) );
 	}
 
 	function find_one( $conditions, $order = null ) {
@@ -137,6 +142,10 @@ class GP_Thing {
 
 	function find( $conditions, $order = null ) {
 		return $this->find_many( $conditions, $order );
+	}
+	
+	function find_no_map( $conditions, $order = null ) {
+		return $this->_no_map( 'find',  array( $conditions, $order ) );
 	}
 
 	function query() {
@@ -305,6 +314,10 @@ class GP_Thing {
 		return $mapped;
 	}
 
+	function map_no_map( $results ) {
+		return $this->_no_map( 'map', $results );
+	}
+	
 	// Triggers
 
 	function after_create() {
